@@ -31,6 +31,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             })
+            console.log(JSON.stringify(pr, null, 2))
             return {
               num: context.issue.number,
               branchName: pr.head.ref,
@@ -42,10 +43,10 @@ jobs:
         with:
           script: |
             const prData = ${{ steps.get-pr-data.outputs.result }}
-            console.log(`Run /tier1, repo: ${context.repo.owner}/${context.repo.repo}, ref: ${prData.head.ref}`)
+            // console.log(`Run /tier1, repo: ${context.repo.owner}/${context.repo.repo}, ref: ${prData.head.branchName}`)
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'browser-compatibility.yml',
-              ref: prData.head.ref,
+              ref: prData.head.branchName,
             })
