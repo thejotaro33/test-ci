@@ -5,6 +5,17 @@ on:
     # At the end of every day
     - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      repo:
+        description: 'vite repository to use'
+        required: true
+        type: string
+        default: 'tinker7th/test-ci'
+      branchName:
+        description: 'vite branch to use'
+        required: true
+        type: string
+        default: 'main'
 jobs:
   main-test:
     name: Playground E2E test
@@ -15,6 +26,9 @@ jobs:
         browsers: [firefox, webkit]
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repo }}
+          ref: ${{ inputs.branchName }}
       - uses: pnpm/action-setup@v2
         with:
           version: 7.9.5

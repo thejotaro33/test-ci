@@ -35,7 +35,10 @@ jobs:
             return {
               num: context.issue.number,
               branchName: pr.head.ref,
-              repo: pr.head.repo.full_name
+              full_name: pr.head.repo.full_name,
+              repo: pr.head.repo.full_name,
+              sha: pr.head.sha,
+              ref: pr.head.ref
             }
 
       - uses: actions/github-script@v6
@@ -43,10 +46,13 @@ jobs:
         with:
           script: |
             const prData = ${{ steps.get-pr-data.outputs.result }}
-            // console.log(`Run /tier1, repo: ${context.repo.owner}/${context.repo.repo}, ref: ${prData.head.branchName}`)
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'browser-compatibility.yml',
-              ref: prData.head.branchName,
+              ref: 'main',
+              inputs: {
+                repo: prData.full_name,
+                branchName: prData.ref,
+              }
             })
