@@ -7,7 +7,7 @@ on:
 jobs:
   trigger:
     runs-on: ubuntu-latest
-    if: github.repository == 'fi3ework/test-ci' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/tier1')
+    if: github.repository == 'tinker7th/test-ci' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/tier1')
     steps:
       - uses: actions/github-script@v6
         with:
