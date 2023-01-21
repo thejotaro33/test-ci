@@ -7,9 +7,10 @@ on:
 jobs:
   trigger:
     runs-on: ubuntu-latest
-    if: github.repository == 'tinker7th/test-ci' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/tier1')
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/tier1')
     steps:
       - uses: actions/github-script@v6
+        id: reaction
         with:
           script: |
             const user = context.payload.sender.login
@@ -17,8 +18,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: context.payload.comment.id,
-              content: '+1',
+              content: 'rocket',
             })
+
       - uses: actions/github-script@v6
         id: get-pr-data
         with:
@@ -34,17 +36,16 @@ jobs:
               branchName: pr.head.ref,
               repo: pr.head.repo.full_name
             }
+
       - uses: actions/github-script@v6
         id: trigger
         with:
           script: |
             const prData = ${{ steps.get-pr-data.outputs.result }}
-            console.log('sha', context.sha)
-            console.log('ref', context.ref)
-            console.log('branchName', prData.branchName)
+            console.log(`Run /tier1, repo: ${context.repo.owner}/${context.repo.repo}, ref: ${prData.head.ref}`)
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'browser-compatibility.yml',
-              ref: context.ref,
+              ref: prData.head.ref,
             })
