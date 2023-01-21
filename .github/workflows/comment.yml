@@ -1,0 +1,49 @@
+name: Browser compatibility (comment trigger)
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    if: github.repository == 'fi3ework/test-ci' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/tier1')
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const user = context.payload.sender.login
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: '+1',
+            })
+      - uses: actions/github-script@v6
+        id: get-pr-data
+        with:
+          script: |
+            console.log(`Get PR info: ${context.repo.owner}/${context.repo.repo}#${context.issue.number}`)
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            })
+            return {
+              num: context.issue.number,
+              branchName: pr.head.ref,
+              repo: pr.head.repo.full_name
+            }
+      - uses: actions/github-script@v6
+        id: trigger
+        with:
+          script: |
+            console.log('sha', context.sha)
+            console.log('ref', context.ref)
+            console.log('branchName', prData.branchName)
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'browser-compatibility.yml',
+              ref: context.ref,
+            })
