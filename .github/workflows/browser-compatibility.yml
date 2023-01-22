@@ -1,9 +1,9 @@
 name: Browser compatibility (Firefox and Safari)
 
 on:
-  schedule:
+  #schedule:
     # At the end of every day
-    - cron: '*/5 * * * *'
+  #  - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
       repo:
