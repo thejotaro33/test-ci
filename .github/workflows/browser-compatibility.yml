@@ -3,7 +3,7 @@ name: Browser compatibility (Firefox and Safari)
 on:
   schedule:
     # At the end of every day
-    - cron: '0 0 * * *'
+    - cron: '* * * * *'
   workflow_dispatch:
     inputs:
       repo:
@@ -27,18 +27,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: ${{ inputs.repo }}
-          ref: ${{ inputs.branchName }}
+          repository: ${{ inputs.repo || github.repository }}
+          ref: ${{ inputs.branchName || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: 7.9.5
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
+      - name: echo
+        run: echo "${{ github.repository }}" && echo "${{ github.ref }}"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
-      - name: Install playwright browsers
-        run: npx playwright install ${{ matrix.browsers }}
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version-file: '.nvmrc'
+      #     cache: 'pnpm'
+
+      # - name: Install dependencies
+      #   run: pnpm install --frozen-lockfile
+
+
+      # - name: Install playwright browsers
+        # run: npx playwright install ${{ matrix.browsers }}
