@@ -35,7 +35,7 @@ jobs:
       - name: echo
         env:
           TEST_PLAYWRIGHT_BROWSER_NAME: ${{ matrix.browsers }}
-        run: echo "${{ github.repository }}" && echo "${{ github.ref }}" && echo "${{ $TEST_PLAYWRIGHT_BROWSER_NAME }}"
+        run: echo "${{ github.repository }}" && echo "${{ github.ref }}" && echo $TEST_PLAYWRIGHT_BROWSER_NAME
 
 
       # - uses: actions/setup-node@v3
