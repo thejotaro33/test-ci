@@ -33,7 +33,9 @@ jobs:
         with:
           version: 7.9.5
       - name: echo
-        run: echo "${{ github.repository }}" && echo "${{ github.ref }}"
+        env:
+          TEST_PLAYWRIGHT_BROWSER_NAME: ${{ matrix.browsers }}
+        run: echo "${{ github.repository }}" && echo "${{ github.ref }}" && echo "${{ $TEST_PLAYWRIGHT_BROWSER_NAME }}"
 
 
       # - uses: actions/setup-node@v3
